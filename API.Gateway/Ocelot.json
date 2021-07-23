@@ -5,12 +5,61 @@
             "DownstreamScheme": "http",
             "DownstreamHostAndPorts": [
                 {
+                    "Host": "base.service",
+                    "Port": 4001
+                }
+            ],
+            "UpstreamPathTemplate": "/WF/",
+            "UpstreamHttpMethod": [ "Get" ]
+        },
+        {
+            "DownstreamPathTemplate": "/WeatherForecast/{id}",
+            "DownstreamScheme": "http",
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "base.service",
+                    "Port": 4001
+                }
+            ],
+            "UpstreamPathTemplate": "/WF/{id}",
+            "UpstreamHttpMethod": [ "Get" ]
+        },
+        {
+            "DownstreamPathTemplate": "/Transaction/",
+            "DownstreamScheme": "http",
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "base.service",
+                    "Port": 4001
+                }
+            ],
+            "UpstreamPathTemplate": "/Tran/",
+            "UpstreamHttpMethod": [ "Get" ]
+        },
+        {
+            "DownstreamPathTemplate": "/Transaction/{id}",
+            "DownstreamScheme": "http",
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "base.service",
+                    "Port": 4001
+                }
+            ],
+            "UpstreamPathTemplate": "/Tran/{id}",
+            "UpstreamHttpMethod": [ "Get" ]
+        },
+        {
+            "DownstreamPathTemplate": "/WeatherForecastCache/",
+            "DownstreamScheme": "http",
+            "DownstreamHostAndPorts": [
+                {
                     "Host": "cache.service",
                     "Port": 4002
                 }
             ],
-            "UpstreamPathTemplate": "/WFCache/",
+            "UpstreamPathTemplate": "/WFC/",
             "UpstreamHttpMethod": [ "Get" ]
-        }       
+        }
+
     ]
 }
