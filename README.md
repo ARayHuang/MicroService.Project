@@ -10,7 +10,7 @@
 一個系統一秒有幾萬筆資料，如何在運作超過一段時間後，統計每分鐘/每小時的流量...等等的分析資料，同時不會效能低落。
 ```
 
-解法有幾種，自己也實作了(等待某次的commit再來說)。當下覺得這樣的交易API，需要加上快取服務，甚至將交易與帳務拆成兩個微服物來處理，效能可能更好。
+解法有幾種，自己也實作了(等待某次的commit再來說)。當下覺得這樣的交易API，需要加上快取服務，甚至將交易與帳務拆成兩個微服務來處理，效能可能更好。
 
 那...那服務之間要怎麼串起來，可以使用MQ(RabbitMQ、Kafka)，用Event Driven Development，把Log、背後要統計的資料、快取...等的動作，放在其他服務串起來。
 
@@ -28,6 +28,7 @@ dotnet build
 dotnet run 
 ```
 這樣就可以完成一個最簡單的webAPI，用postman去打一下API應該就有東西了。
+
 3. 但這樣只能算是一個執行程式，怎麼變成服務呢?就是要用docker把它佈署成為一個container。(Docker/Container的介紹，不會在這邊說)通常要將local的程式佈署到docker，會用Dockerfile將整包程式轉成image，再透過docker變成一個container讓他跑起裡面的程序(這樣就是一小顆服務了)。
 
 以下開始介紹DockerFile
@@ -52,8 +53,8 @@ COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "Base.Service.dll"]
 ```
 一個一個來說明
-- FROM 就是要用哪個image來執行這顆服務，也就是這顆服務的OS是什麼，裡面裝了那些軟體了(通常各大廠商都會開發好，讓開發人員使用)
-- WORKDIR 表示在container裡面的工作目錄(類似cd)
+- FROM 就是要用哪一個image來執行這顆服務，也就是這顆服務的OS是什麼，裡面裝了那些軟體了(通常各大廠商都會開發好，讓開發人員使用)
+- WORKDIR 表示移動到container裡面的工作目錄(類似cd)
 - COPY 表示將local端的目錄(資料夾/檔案) 複製到container裡面的目錄
 - RUN 表示執行某個動作(這邊就是執行dotnet ...)
 - ENTRYPOINT 表示container啟動後，執行的命令
@@ -61,7 +62,7 @@ ENTRYPOINT ["dotnet", "Base.Service.dll"]
 所以可以來說說上面一大塊做了哪些:
 **前情提要:每個FROM產生的都是獨立的一個空間**
 1. 一開始先用aspnet:3.1-focal的image當作runtime要使用的publish資料複製到base image空間，然後將目錄與port設定好，暫不使用。
-2. 利用sdk:3.1-focal這個SDK來當作建置要使用的image空見，移動到src並將local端的程式複製到container裡面。然後執行restore跟build。
+2. 利用sdk:3.1-focal這個SDK來當作建置要使用的image空間，移動到src並將local端的程式複製到container裡面。然後執行restore跟build。
 3. build沒有問題，用相同的方式打包成Release放置到/app/publish資料夾。 (2、3都是在build這個image空間)
 4. 最後使用一開始的runtime base image空間來執行，先切換到app目錄，再將build空間的/app/publish資料複製到base空間的/app裡面，利用ENTRYPOINT執行。
 
@@ -95,7 +96,7 @@ docker run -d --name=myapp --rm -p 8000:80 <image的名稱>
 ## API Gateway
 API Gateway設什麼呢?主要是讓Client面對API只會有一個進入點。例如我有五顆服務，各自的port、route可能不是統一設計的規範，這樣管理起來相當麻煩。
 
-可以透過API Gateway讓它重新route，讓client只要知道最後的API位置，其餘的都封裝在API Gateway。同時也可以在API Gateway處理log、JWT驗證、分流...等每個request都需要處理的動作。
+可以透過API Gateway讓它重新route，讓client只要知道最後的API位置，其餘的都封裝在API Gateway。同時也可以在API Gateway處理log、JWT驗證、分流...等，每個request都需要處理的動作。
 
 使用Ocelot作為API Gateway，跟上面微服務相同，建置一個new webapi的專案。在程式中補上一些設定即可完成。
 
@@ -259,6 +260,11 @@ docker rm <containerID1> <containerID1> ...
 docker exec -it <containerID1> bash
 
 ```
+以上，透過三個小服務(base.service,cache.service,api.gateway)，就可以跑起來一個小的微服務世界。真正的微服務還有很多可以架構的，待之後慢慢接觸...
+
+
+
+
 # 之後還想繼續完成的紀錄一下
 1. Service Discovery
 2. MQ Kafka
