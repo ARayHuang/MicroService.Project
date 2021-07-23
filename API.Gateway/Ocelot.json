@@ -1,0 +1,16 @@
+{
+    "Routes": [    
+        {
+            "DownstreamPathTemplate": "/WeatherForecast/",
+            "DownstreamScheme": "http",
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "cache.service",
+                    "Port": 4002
+                }
+            ],
+            "UpstreamPathTemplate": "/WFCache/",
+            "UpstreamHttpMethod": [ "Get" ]
+        }       
+    ]
+}

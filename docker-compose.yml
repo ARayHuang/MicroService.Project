@@ -1,0 +1,39 @@
+version: "3"
+
+services:
+  base.service:
+    container_name: base.service
+    hostname: base.service
+    build:
+      context: ./Base.Service
+      dockerfile: Dockerfile
+    image: base.service/latest
+    ports:
+      - "4001:4001"
+    environment:
+      "PUBLIC_PORT": "4001"
+  cache.service:
+    container_name: cache.service
+    hostname: cache.service
+    build:
+      context: ./Cache.Service
+      dockerfile: Dockerfile
+    image: cache.service/latest
+    ports:
+      - "4002:4002"
+    environment:
+      "PUBLIC_PORT": "4002"
+  API.Gateway:
+    container_name: API.Gateway
+    build:
+      context: ./API.Gateway
+      dockerfile: Dockerfile
+    image: API.Gateway/latest
+    ports:
+      - "5001:5001"
+    links:
+      - base.service
+      - cache.service
+    depends_on:
+      - base.service
+      - cache.service
