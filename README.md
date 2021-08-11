@@ -18,6 +18,7 @@
 
 # 一步一步來吧
 [Chapter-1 微服務的建立](Chapter/Chapter-1.md)
+[Chapter-2 驗證與授權  ](Chapter/Chapter-2.md)
 
 
 # 之後還想繼續完成的紀錄一下
